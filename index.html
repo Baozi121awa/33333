@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>随机座位生成器 - 冰微未来实验室</title>
+    <meta name="keywords" content="kaygb,珂泽在线工具,随机密码生成器,密码生成器,随机密码">
+    <link rel="icon" href="https://cdn.jsdelivr.net/gh/kaygb/twentytwenty/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <style>
+        body{
+            overflow-y: scroll;
+        }
+        .bg-black{
+            background: #000
+        }
+    </style>
+</head>
+<body style="background:#f5f6fa">
+    <!-- 导航 -->
+    <nav class="navbar navbar-dark bg-black fixed-top shadow-sm">
+        <div class="container"> 
+            <a class="navbar-brand" href="/">冰微未来实验室</a>
+
+            <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" href="//www.vwmwv.cn" target="_blank">Home</a>
+                    <a class="nav-link" href="//github.com/kaygb" target="_blank">Github</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- /导航 -->
+
+    <!-- 幕布 -->
+    <div class="jumbotron jumbotron-fluid" style="margin-top: 48px;">
+        <div class="container">
+             <h1 class="display-4">随机座位生成器</h1>
+            <p class="lead">根据学生姓名，生成对应座位号</p>
+        </div>
+    </div>
+    <!-- /幕布 -->
+
+    <!-- 主体 -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                
+                <div class="card border-0 shadow-sm mb-4 rounded-0">
+                    
+                    <div class="card-body">
+                        <div class="input-group input-group-sm mb-3 mt-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="">人数总量</span>
+                            </div>
+                            <input type="text" id="sum" class="form-control" aria-describedby="inputGroup-sizing-sm">
+                          </div>
+                          <div class="input-group input-group-sm mb-3 mt-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="">每排人数</span>
+                            </div>
+                            <input type="text" id="lie" class="form-control" aria-describedby="inputGroup-sizing-sm">
+                          </div>
+                          <div class="input-group input-group-sm mb-3 mt-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="">位置编号过滤</span>
+                            </div>
+                            <input type="text" id="seatnum" class="form-control" placeholder="数字，用空格隔开，数量和下方一致" aria-describedby="inputGroup-sizing-sm">
+                          </div>
+                          <div class="input-group input-group-sm mb-3 mt-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="">学生姓名过滤</span>
+                            </div>
+                            <input type="text" id="stunum" class="form-control" placeholder="姓名，用空格隔开"  aria-describedby="inputGroup-sizing-sm">
+                          </div>
+                          <button type="button" id="submit" class="btn btn-success" style="margin-bottom: 20px;">生成随机座位号</button>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">生成的随机序列</span>
+                            </div>
+                            <textarea id="res"  class="form-control" aria-label="With textarea" cols="5"></textarea>
+                          </div>
+                    </div>
+                
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="card border-0 shadow-sm mb-4 rounded-0">
+                    <div class="alert alert-primary " style="margin: 10px;" role="alert">
+                        表格在下方生成，座位编号从左到右为1,2,3,4,5,6... 生成后ext表示座位已经被占用，其余座位为学生编号
+                      </div>
+                    <table class="table table-bordered">
+                        <tbody id="content">
+                        <tr>
+                            <td>座位编号1</td>
+                            <td>座位编号2</td>
+                            <td>座位编号3</td>
+                        </tr>
+                        <tr>
+                            <td>座位编号4</td>
+                            <td>座位编号5</td>
+                            <td>座位编号6</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /主体 -->
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let btn = document.getElementById("submit");
+
+        btn.onclick = function(){
+            let lie = document.getElementById("lie").value;
+            let sum = document.getElementById("sum").value;
+
+            let seatnum_str = document.getElementById("seatnum").value;
+            let seatnum = seatnum_str.split(" ");
+            let newseatnum = seatnum.filter(num => num.trim() !== "").map(num => parseInt(num));
+
+            let stunum_str = document.getElementById("stunum").value;
+            let stunum = stunum_str.split(" ");
+            let newstunum = stunum.filter(name => name.trim() !== "");
+
+            if(newseatnum.length !== newstunum.length){
+                alert("过滤的座位和人数不一致，会导致错误");
+                return;
+            }
+
+            let arr = [];
+            for(let i = 1; i <= sum; i++){
+                if(!newstunum.includes(i.toString())){
+                    arr.push(i);
+                }
+            }
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            let shuffledArr = shuffleArray(arr);
+
+            document.getElementById("res").value = shuffledArr.join(", ");
+
+            let html = "<tr>";
+            let st1 = 0;
+            for(let i = 1; i <= sum; i++){
+                if((i - 1) % lie === 0){
+                    html += "</tr><tr>";
+                }
+
+                if(!newseatnum.includes(i)){
+                    html += "<td>" + shuffledArr[st1++] + "</td>";
+                }else{
+                    html += "<td style='color:red'>ext</td>";
+                }
+            }
+            html += "</tr>";
+            document.getElementById("content").innerHTML = html;
+        }
+    </script>
+</body>
+</html>
